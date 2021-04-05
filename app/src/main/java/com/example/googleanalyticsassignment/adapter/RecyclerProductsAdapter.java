@@ -13,9 +13,12 @@ import android.widget.TextView;
 import com.example.googleanalyticsassignment.ProductDetailsActivity;
 import com.example.googleanalyticsassignment.R;
 import com.example.googleanalyticsassignment.model.Product;
+import com.example.googleanalyticsassignment.utility.Service;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Random;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,10 +26,12 @@ import androidx.recyclerview.widget.RecyclerView;
 public class RecyclerProductsAdapter extends RecyclerView.Adapter<RecyclerProductsAdapter.VHolderProduct> {
     List<Product> products;
     Context context;
+    FirebaseAnalytics mFirebaseAnalytics;
 
-    public RecyclerProductsAdapter(Context context,List<Product> products) {
+    public RecyclerProductsAdapter(Context context,FirebaseAnalytics mFirebaseAnalytics,List<Product> products) {
         this.products = products;
         this.context=context;
+        this.mFirebaseAnalytics=mFirebaseAnalytics;
     }
 
     @NonNull
@@ -51,6 +56,7 @@ public class RecyclerProductsAdapter extends RecyclerView.Adapter<RecyclerProduc
     }
 
     public class VHolderProduct extends RecyclerView.ViewHolder {
+
         ImageView imageView;
         TextView textViewName;
         public VHolderProduct(@NonNull View itemView) {
@@ -64,6 +70,12 @@ public class RecyclerProductsAdapter extends RecyclerView.Adapter<RecyclerProduc
                     Bundle bundle=new Bundle();
                     bundle.putSerializable("DATA_PRODUCT",products.get(getAdapterPosition()));
                     intent.putExtras(bundle);
+
+ //               firebase analytics select content
+                    new Service().selectContent(
+                            mFirebaseAnalytics,
+                            String.valueOf(new Random().nextInt(10000)),
+                            products.get(getAdapterPosition()).getNameProduct(),"clickButton");
                     context.startActivity(intent);
                 }
             });
